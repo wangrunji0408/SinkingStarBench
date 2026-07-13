@@ -683,6 +683,22 @@ impl<'a> Game<'a> {
         output
     }
 
+    /// 为人类阅读渲染地图，并显示地图外隐含的一圈墙。
+    pub fn render_bordered(&self) -> String {
+        let border = "#".repeat(self.level.width + 2);
+        let mut output = String::with_capacity((self.level.width + 3) * (self.level.height + 2));
+        output.push_str(&border);
+        output.push('\n');
+        for line in self.render().lines() {
+            output.push('#');
+            output.push_str(line);
+            output.push('#');
+            output.push('\n');
+        }
+        output.push_str(&border);
+        output
+    }
+
     pub fn report(&self) -> GameReport {
         let mut stones: Vec<Pos> = self.stones.iter().copied().collect();
         stones.sort_by_key(|pos| (pos.y, pos.x));
@@ -702,7 +718,7 @@ impl<'a> Game<'a> {
     }
 
     pub fn describe(&self) -> String {
-        let mut output = self.render();
+        let mut output = self.render_bordered();
         let actor = self.selected_actor();
         write!(
             output,
@@ -871,5 +887,12 @@ mod tests {
         let mut game = Game::new(&level);
         game.apply(Action::Move(Direction::Right));
         assert!(game.won());
+    }
+
+    #[test]
+    fn human_render_shows_implicit_outer_walls() {
+        let level = one_level("A .");
+        let game = Game::new(&level);
+        assert_eq!(game.render_bordered(), "#####\n#A .#\n#####");
     }
 }

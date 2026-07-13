@@ -195,7 +195,7 @@ fn draw(game: &Game<'_>) -> Result<()> {
     let mut stdout = io::stdout();
     execute!(stdout, MoveTo(0, 0), Clear(ClearType::All))?;
     write!(stdout, "《沉星之序》  关卡 {}\r\n\r\n", game.level().name)?;
-    for line in game.render().lines() {
+    for line in game.render_bordered().lines() {
         write!(stdout, "{line}\r\n")?;
     }
     write!(stdout, "\r\n")?;
