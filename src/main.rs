@@ -170,7 +170,7 @@ fn draw(game: &Game<'_>) -> Result<()> {
     let actor = game.selected_actor();
     write!(
         stdout,
-        "Current: {}({}) @ ({}, {}){}    Doors: {}    Actions: {}\r\n",
+        "Current: {}({}) @ ({}, {}){}    Actions: {}\r\n",
         actor.kind.symbol(),
         actor.kind,
         actor.pos.x,
@@ -180,7 +180,6 @@ fn draw(game: &Game<'_>) -> Result<()> {
         } else {
             ""
         },
-        if game.doors_open() { "open" } else { "closed" },
         game.action_sequence()
     )?;
     write!(

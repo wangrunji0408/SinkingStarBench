@@ -672,7 +672,12 @@ impl<'a> Game<'a> {
                 } else if self.stones.contains(&pos) {
                     '$'
                 } else {
-                    self.level.tile(pos).symbol()
+                    let tile = self.level.tile(pos);
+                    if tile == Tile::Door && self.doors_open() {
+                        ' '
+                    } else {
+                        tile.symbol()
+                    }
                 };
                 output.push(character);
             }
@@ -704,19 +709,12 @@ impl<'a> Game<'a> {
         let actor = self.selected_actor();
         write!(
             output,
-            "\nLevel {}  Actor {}({}) @ ({}, {})  Doors {}  Won {}\nActions {}",
+            "\nLevel {}  Actor {}({}) @ ({}, {})  Won {}\nActions {}",
             self.level.name,
             actor.kind.symbol(),
             actor.kind,
             actor.pos.x,
             actor.pos.y,
-            if self.doors_open() {
-                "open"
-            } else if self.actor_trapped(self.selected) {
-                "closed (current actor trapped)"
-            } else {
-                "closed"
-            },
             if self.won() { "yes" } else { "no" },
             self.action_sequence()
         )
@@ -802,7 +800,7 @@ mod tests {
         assert!(!game.doors_open());
         game.apply(Action::Move(Direction::Right));
         assert!(game.doors_open());
-        assert_eq!(game.render(), " A$|.");
+        assert_eq!(game.render(), " A$ .");
         game.apply(Action::Move(Direction::Right));
         assert!(game.doors_open());
     }
