@@ -169,25 +169,14 @@ fn play(levels: &[Level], requested: Option<&str>, save: Option<&Path>) -> Resul
 
 fn choose_level(levels: &[Level]) -> Result<&Level> {
     println!("可用关卡：");
-    for (index, level) in levels.iter().enumerate() {
-        println!(
-            "  {:>2}. {} ({}x{})",
-            index + 1,
-            level.name,
-            level.width,
-            level.height
-        );
+    for level in levels {
+        println!("{}", level.name);
     }
-    print!("输入编号或关卡名：");
+    print!("输入关卡名：");
     io::stdout().flush()?;
     let mut input = String::new();
     io::stdin().read_line(&mut input)?;
     let input = input.trim();
-    if let Ok(index) = input.parse::<usize>() {
-        return levels
-            .get(index.wrapping_sub(1))
-            .ok_or_else(|| anyhow!("关卡编号超出范围：{index}"));
-    }
     find_level(levels, input)
 }
 
