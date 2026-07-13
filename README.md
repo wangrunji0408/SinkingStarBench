@@ -1,32 +1,40 @@
-# 《沉星之序》CLI
+# Order of the Sinking Star CLI
 
-构建：
+Build:
 
 ```sh
 cargo build --release
 ```
 
-`levels/` 中每关一个地图文件。构建时会自动扫描这些 `.txt` 文件并嵌入可执行文件，成品运行时不需要携带关卡文件。
+Each level in `levels/` is one map file. These `.txt` files are automatically scanned and embedded into the binary at build time — the finished binary does not need the level files at runtime.
 
-命令：
+Commands:
 
 ```sh
-# 交互游玩（不写关卡名时会先选择关卡）
+# Play interactively (omit level name to choose from a list)
 cargo run -- play
 cargo run -- play 1-1
 cargo run -- play 1-1 --save solutions/1-1.txt
 
-# 从标准输入一次性执行动作，坐标均为从 0 开始的 (x, y)
+# Execute an action sequence from stdin (coordinates are 0-based (x, y))
 cargo run --release -- run 1-1 < solutions/1-1.txt
 printf 'WASDD' | cargo run --release -- run 1-1
 
-# 展示、列举关卡
+# Show / list levels
 cargo run -- show 2-3
 cargo run -- list
 ```
 
-输入支持 `WASD` 或 `↑↓←→`，`Z` 撤销，`R` 重置，`X` 触发机关（当前无效果），`C` 切换角色。一次性输入中的空白和逗号会被忽略。
+Input accepts `WASD` or `↑↓←→`, `Z` undo, `R` reset, `X` trigger (no effect yet), `C` switch actor. Whitespace and commas in batch input are ignored.
 
-游戏规则按 `levels/` 中的地图实现，空地用空格表示：战士推动相连的一串物体；盗贼移动时只拉动身后紧邻的一个物体；巫师与移动方向上、墙或关闭的门之前的第一个物体隔空交换位置。能力可作用于石头或其他角色。地图外视为墙；至少有一个开关且全部被石头或角色压住时门开启；关门时，门格上的石头被碾碎，角色则被卡住、无法主动移动。角色位置集合与目标集合相同时通关。
+## Rules
 
-`show`、`play` 和 `run` 会显示地图外隐含的一圈墙。
+- **Tiles**: Floor (` `), Wall (`#`), Switch (`_`), Door (`|`), Goal (`.`). Outside the map is a wall.
+- **Objects**: Stones (`$`) can be pushed, pulled, or swapped. Actors have unique abilities and can also trigger switches or stand on goals.
+- **Warrior** (`A`): Pushes a connected chain of objects ahead in the movement direction.
+- **Thief** (`B`): Pulls only the single object immediately behind when moving forward.
+- **Wizard** (`C`): Swaps places with the first object along the movement direction before a wall or closed door.
+- **Doors**: Open when at least one switch exists and every switch is occupied by a stone or actor. When doors close, stones on door tiles are crushed and actors become trapped (cannot move on their own).
+- **Win condition**: The set of actor positions equals the set of goal positions.
+
+`show`, `play`, and `run` display an implicit ring of outer walls around the map.

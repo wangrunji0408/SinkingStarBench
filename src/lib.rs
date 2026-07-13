@@ -43,9 +43,9 @@ impl ActorKind {
 impl fmt::Display for ActorKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str(match self {
-            Self::Warrior => "战士",
-            Self::Thief => "盗贼",
-            Self::Wizard => "巫师",
+            Self::Warrior => "Warrior",
+            Self::Thief => "Thief",
+            Self::Wizard => "Wizard",
         })
     }
 }
@@ -121,26 +121,26 @@ impl Level {
 
 #[derive(Debug, Error)]
 pub enum LevelError {
-    #[error("未找到任何关卡")]
+    #[error("no levels found")]
     NoLevels,
-    #[error("第 {line} 行的关卡名重复：{name}")]
+    #[error("duplicate level name at line {line}: {name}")]
     DuplicateName { line: usize, name: String },
-    #[error("关卡 {name} 没有地图")]
+    #[error("level {name} has no map")]
     EmptyMap { name: String },
-    #[error("关卡 {name} 第 {line} 行宽度为 {actual}，应为 {expected}")]
+    #[error("level {name} line {line} has width {actual}, expected {expected}")]
     UnevenWidth {
         name: String,
         line: usize,
         actual: usize,
         expected: usize,
     },
-    #[error("关卡 {name} 第 {line} 行包含未知字符 {character:?}")]
+    #[error("level {name} line {line} contains unknown character {character:?}")]
     InvalidTile {
         name: String,
         line: usize,
         character: char,
     },
-    #[error("关卡 {name} 中没有角色")]
+    #[error("level {name} has no actors")]
     NoActors { name: String },
 }
 
@@ -245,7 +245,7 @@ pub fn parse_levels(input: &str) -> Result<Vec<Level>, LevelError> {
     Ok(levels)
 }
 
-/// 读取编译时从 `levels/*.txt` 嵌入可执行文件的全部关卡。
+/// Read all levels embedded from `levels/*.txt` at compile time.
 pub fn embedded_levels() -> Result<Vec<Level>, LevelError> {
     let mut combined = String::new();
     for (name, map) in EMBEDDED_LEVEL_SOURCES {
@@ -322,7 +322,7 @@ impl Action {
 }
 
 #[derive(Debug, Error)]
-#[error("输入序列第 {index} 个字符 {character:?} 无效；可用 WASD、方向箭头、Z、R、X、C")]
+#[error("invalid character {character:?} at position {index}; expected WASD, arrows, Z, R, X, or C")]
 pub struct ActionParseError {
     pub index: usize,
     pub character: char,
@@ -640,7 +640,7 @@ impl<'a> Game<'a> {
         }
     }
 
-    /// 角色位于已经关闭的门上时被卡住，不能主动移动。
+    /// An actor is trapped on a closed door and cannot move on their own.
     pub fn actor_trapped(&self, index: usize) -> bool {
         self.actors
             .get(index)
@@ -683,7 +683,7 @@ impl<'a> Game<'a> {
         output
     }
 
-    /// 为人类阅读渲染地图，并显示地图外隐含的一圈墙。
+    /// Render the map for human viewing, with implicit outer walls shown.
     pub fn render_bordered(&self) -> String {
         let border = "#".repeat(self.level.width + 2);
         let mut output = String::with_capacity((self.level.width + 3) * (self.level.height + 2));
@@ -704,20 +704,20 @@ impl<'a> Game<'a> {
         let actor = self.selected_actor();
         write!(
             output,
-            "\n关卡 {}  当前角色 {}({}) @ ({}, {})  门 {}  通关 {}\n动作 {}",
+            "\nLevel {}  Actor {}({}) @ ({}, {})  Doors {}  Won {}\nActions {}",
             self.level.name,
             actor.kind.symbol(),
             actor.kind,
             actor.pos.x,
             actor.pos.y,
             if self.doors_open() {
-                "开"
+                "open"
             } else if self.actor_trapped(self.selected) {
-                "关（当前角色被卡住）"
+                "closed (current actor trapped)"
             } else {
-                "关"
+                "closed"
             },
-            if self.won() { "是" } else { "否" },
+            if self.won() { "yes" } else { "no" },
             self.action_sequence()
         )
         .expect("writing to String cannot fail");

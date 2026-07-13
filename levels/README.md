@@ -1,15 +1,15 @@
-# 关卡文件
+# Level files
 
-每个 `.txt` 文件是一张地图，文件名就是关卡名。构建脚本会按数字顺序扫描并嵌入所有 `.txt` 文件。
+Each `.txt` file is one map; the file name is the level name. The build script scans and embeds all `.txt` files in numeric order.
 
-图例：
+Legend:
 
-- ` `（空格）空地
-- `#` 墙
-- `$` 石头
-- `_` 开关
-- `|` 门
-- `.` 目标点
-- `A` 战士
-- `B` 盗贼
-- `C` 巫师
+- ` ` (space) floor
+- `#` wall
+- `$` stone
+- `_` switch
+- `|` door
+- `.` goal
+- `A` warrior
+- `B` thief
+- `C` wizard

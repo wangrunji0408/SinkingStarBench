@@ -9,7 +9,7 @@ fn main() {
     println!("cargo:rerun-if-changed={}", levels_dir.display());
 
     let mut files: Vec<(u32, u32, String, PathBuf)> = fs::read_dir(&levels_dir)
-        .unwrap_or_else(|error| panic!("无法读取 {}: {error}", levels_dir.display()))
+        .unwrap_or_else(|error| panic!("failed to read {}: {error}", levels_dir.display()))
         .filter_map(|entry| {
             let path = entry.unwrap().path();
             if path.extension().and_then(|value| value.to_str()) != Some("txt") {
@@ -17,13 +17,13 @@ fn main() {
             }
             let name = path.file_stem().unwrap().to_string_lossy().into_owned();
             let (chapter, level) = parse_level_name(&name).unwrap_or_else(|| {
-                panic!("关卡文件名必须为 <数字>-<数字>.txt：{}", path.display())
+                panic!("level file name must be <digit>-<digit>.txt: {}", path.display())
             });
             Some((chapter, level, name, path))
         })
         .collect();
     files.sort_by_key(|(chapter, level, _, _)| (*chapter, *level));
-    assert!(!files.is_empty(), "levels 目录中没有 .txt 关卡文件");
+    assert!(!files.is_empty(), "no .txt level files found in levels/");
 
     let mut generated = String::from("const EMBEDDED_LEVEL_SOURCES: &[(&str, &str)] = &[\n");
     for (_, _, name, path) in files {
@@ -40,7 +40,7 @@ fn main() {
 
     let output = PathBuf::from(env::var_os("OUT_DIR").unwrap()).join("embedded_levels.rs");
     fs::write(&output, generated)
-        .unwrap_or_else(|error| panic!("无法生成 {}: {error}", output.display()));
+        .unwrap_or_else(|error| panic!("failed to generate {}: {error}", output.display()));
 }
 
 fn parse_level_name(name: &str) -> Option<(u32, u32)> {
@@ -50,5 +50,5 @@ fn parse_level_name(name: &str) -> Option<(u32, u32)> {
 
 fn absolute(path: &Path) -> PathBuf {
     path.canonicalize()
-        .unwrap_or_else(|error| panic!("无法定位 {}: {error}", path.display()))
+        .unwrap_or_else(|error| panic!("failed to resolve {}: {error}", path.display()))
 }

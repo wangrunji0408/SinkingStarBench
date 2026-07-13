@@ -13,9 +13,9 @@ use crossterm::terminal::{
 use sinking_star::{Action, Direction, Game, Level, embedded_levels, parse_actions, parse_levels};
 
 #[derive(Debug, Parser)]
-#[command(name = "sinking-star", version, about = "《沉星之序》关卡 CLI")]
+#[command(name = "sinking-star", version, about = "Order of the Sinking Star — level CLI")]
 struct Cli {
-    /// 使用外部合集关卡文件，而非编译进程序的关卡
+    /// Use an external level collection file instead of embedded levels
     #[arg(long, global = true, value_name = "FILE")]
     levels: Option<PathBuf>,
 
@@ -25,22 +25,22 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Command {
-    /// 实时游玩；省略 LEVEL 时先选择关卡
+    /// Play interactively; choose a level when LEVEL is omitted
     Play {
         level: Option<String>,
 
-        /// 通关后直接将动作序列保存到指定文件
+        /// Save the action sequence to a file after clearing the level
         #[arg(long, value_name = "FILE")]
         save: Option<PathBuf>,
     },
 
-    /// 对关卡一次性执行输入序列并输出最终状态
+    /// Execute an action sequence from stdin and print the final state
     Run { level: String },
 
-    /// 展示某个关卡的初始状态
+    /// Show the initial state of a level
     Show { level: String },
 
-    /// 列出全部关卡
+    /// List all levels
     List,
 }
 
@@ -59,11 +59,11 @@ fn main() -> Result<()> {
 fn load_levels(external: Option<&Path>) -> Result<Vec<Level>> {
     if let Some(path) = external {
         let source = fs::read_to_string(path)
-            .with_context(|| format!("无法读取关卡文件 {}", path.display()))?;
+            .with_context(|| format!("failed to read level file {}", path.display()))?;
         return parse_levels(&source)
-            .with_context(|| format!("无法解析关卡文件 {}", path.display()));
+            .with_context(|| format!("failed to parse level file {}", path.display()));
     }
-    embedded_levels().context("无法解析编译进程序的关卡")
+    embedded_levels().context("failed to parse embedded levels")
 }
 
 fn find_level<'a>(levels: &'a [Level], name: &str) -> Result<&'a Level> {
@@ -76,7 +76,7 @@ fn find_level<'a>(levels: &'a [Level], name: &str) -> Result<&'a Level> {
                 .map(|level| level.name.as_str())
                 .collect::<Vec<_>>()
                 .join(", ");
-            anyhow!("没有关卡 {name:?}；可用关卡：{available}")
+            anyhow!("no level {name:?}; available: {available}")
         })
 }
 
@@ -85,7 +85,7 @@ fn run(levels: &[Level], name: &str) -> Result<()> {
     let mut inputs = String::new();
     io::stdin()
         .read_to_string(&mut inputs)
-        .context("无法从标准输入读取动作序列")?;
+        .context("failed to read actions from stdin")?;
     let actions = parse_actions(&inputs)?;
     let mut game = Game::new(level);
     for action in actions {
@@ -110,7 +110,7 @@ fn list(levels: &[Level]) -> Result<()> {
 
 fn play(levels: &[Level], requested: Option<&str>, save: Option<&Path>) -> Result<()> {
     if !io::stdin().is_terminal() || !io::stdout().is_terminal() {
-        bail!("play 需要交互式终端；自动执行请使用 run")
+        bail!("play requires an interactive terminal; use run for batch execution")
     }
     let level = match requested {
         Some(name) => find_level(levels, name)?,
@@ -136,10 +136,10 @@ fn play(levels: &[Level], requested: Option<&str>, save: Option<&Path>) -> Resul
         }
     }
 
-    println!("通关！动作序列：{}", game.action_sequence());
+    println!("Cleared! Action sequence: {}", game.action_sequence());
     if let Some(path) = save {
         save_solution(path, &game.action_sequence())?;
-        println!("已保存到 {}", path.display());
+        println!("Saved to {}", path.display());
     } else {
         prompt_save(level, &game.action_sequence())?;
     }
@@ -147,11 +147,11 @@ fn play(levels: &[Level], requested: Option<&str>, save: Option<&Path>) -> Resul
 }
 
 fn choose_level(levels: &[Level]) -> Result<&Level> {
-    println!("可用关卡：");
+    println!("Available levels:");
     for level in levels {
         println!("{}", level.name);
     }
-    print!("输入关卡名：");
+    print!("Enter level name: ");
     io::stdout().flush()?;
     let mut input = String::new();
     io::stdin().read_line(&mut input)?;
@@ -162,7 +162,7 @@ fn choose_level(levels: &[Level]) -> Result<&Level> {
 fn draw(game: &Game<'_>) -> Result<()> {
     let mut stdout = io::stdout();
     execute!(stdout, MoveTo(0, 0), Clear(ClearType::All))?;
-    write!(stdout, "《沉星之序》  关卡 {}\r\n\r\n", game.level().name)?;
+    write!(stdout, "Order of the Sinking Star  Level {}\r\n\r\n", game.level().name)?;
     for line in game.render_bordered().lines() {
         write!(stdout, "{line}\r\n")?;
     }
@@ -170,25 +170,25 @@ fn draw(game: &Game<'_>) -> Result<()> {
     let actor = game.selected_actor();
     write!(
         stdout,
-        "当前：{}({}) @ ({}, {}){}    门：{}    动作：{}\r\n",
+        "Current: {}({}) @ ({}, {}){}    Doors: {}    Actions: {}\r\n",
         actor.kind.symbol(),
         actor.kind,
         actor.pos.x,
         actor.pos.y,
         if game.actor_trapped(game.selected()) {
-            " [被卡住]"
+            " [trapped]"
         } else {
             ""
         },
-        if game.doors_open() { "开" } else { "关" },
+        if game.doors_open() { "open" } else { "closed" },
         game.action_sequence()
     )?;
     write!(
         stdout,
-        "WASD/方向键 移动 · Z 撤销 · R 重置 · C 换人 · Q 退出\r\n"
+        "WASD/Arrows move · Z undo · R reset · C switch actor · Q quit\r\n"
     )?;
     if game.won() {
-        write!(stdout, "\r\n★ 通关！\r\n")?;
+        write!(stdout, "\r\n★ Cleared!\r\n")?;
     }
     stdout.flush()?;
     Ok(())
@@ -223,7 +223,7 @@ fn is_quit(key: KeyEvent) -> bool {
 }
 
 fn prompt_save(level: &Level, sequence: &str) -> Result<()> {
-    print!("保存动作序列？[y/N] ");
+    print!("Save action sequence? [y/N] ");
     io::stdout().flush()?;
     let mut answer = String::new();
     io::stdin().read_line(&mut answer)?;
@@ -231,7 +231,7 @@ fn prompt_save(level: &Level, sequence: &str) -> Result<()> {
         return Ok(());
     }
     let default = PathBuf::from("solutions").join(format!("{}.txt", level.name));
-    print!("文件路径 [{}]：", default.display());
+    print!("File path [{}]: ", default.display());
     io::stdout().flush()?;
     let mut path = String::new();
     io::stdin().read_line(&mut path)?;
@@ -241,7 +241,7 @@ fn prompt_save(level: &Level, sequence: &str) -> Result<()> {
         PathBuf::from(path.trim())
     };
     save_solution(&path, sequence)?;
-    println!("已保存到 {}", path.display());
+    println!("Saved to {}", path.display());
     Ok(())
 }
 
@@ -250,10 +250,11 @@ fn save_solution(path: &Path, sequence: &str) -> Result<()> {
         .parent()
         .filter(|parent| !parent.as_os_str().is_empty())
     {
-        fs::create_dir_all(parent).with_context(|| format!("无法创建目录 {}", parent.display()))?;
+        fs::create_dir_all(parent)
+            .with_context(|| format!("failed to create directory {}", parent.display()))?;
     }
     fs::write(path, format!("{sequence}\n"))
-        .with_context(|| format!("无法保存动作序列到 {}", path.display()))
+        .with_context(|| format!("failed to write solution to {}", path.display()))
 }
 
 struct TerminalGuard;
