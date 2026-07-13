@@ -1,5 +1,7 @@
 # Sinking Star Bench
 
+[中文版](README-CN.md) | English
+
 An LLM coding agent benchmark based on *Order of the Sinking Star*, a sokoban-style puzzle game. The task: **"Beat this game"** — understand the rules from a CLI binary and solve all 12 levels.
 
 ## Results
@@ -25,8 +27,6 @@ Pricing used: GPT-5.6 Sol $5/$30 per M input/output (cached 50% off), Claude Opu
 A sokoban-like CLI puzzle with three character classes (Warrior, Thief, Wizard), push/pull/swap mechanics, and switch/door interactions across 12 levels.
 
 See [`levels/README.md`](levels/README.md) for full rules.
-
-[中文版](README-CN.md) | English
 
 ## License
 

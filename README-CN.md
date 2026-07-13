@@ -1,5 +1,7 @@
 # Sinking Star Bench
 
+[English](README.md) | 中文版
+
 基于推箱子解谜游戏 *Order of the Sinking Star* 的 LLM 编程智能体基准测试。任务：**"通关这个游戏"**——理解 CLI 二进制的游戏规则，求解全部 12 个关卡。
 
 ## 测试结果
@@ -25,8 +27,6 @@
 推箱子类 CLI 解谜游戏，包含三种职业（战士/盗贼/法师）、推/拉/交换机制、开关门互动，共 12 个关卡。
 
 完整规则见 [`levels/README.md`](levels/README.md)。
-
-[English](README.md) | 中文版
 
 ## 许可证
 
