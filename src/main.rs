@@ -35,23 +35,13 @@ enum Command {
     },
 
     /// 对关卡一次性执行输入序列并输出最终状态
-    Run {
-        level: String,
-
-        /// 输出便于程序读取的 JSON
-        #[arg(long)]
-        json: bool,
-    },
+    Run { level: String },
 
     /// 展示某个关卡的初始状态
     Show { level: String },
 
     /// 列出全部关卡
-    List {
-        /// 输出 JSON
-        #[arg(long)]
-        json: bool,
-    },
+    List,
 }
 
 fn main() -> Result<()> {
@@ -60,9 +50,9 @@ fn main() -> Result<()> {
 
     match cli.command {
         Command::Play { level, save } => play(&levels, level.as_deref(), save.as_deref()),
-        Command::Run { level, json } => run(&levels, &level, json),
+        Command::Run { level } => run(&levels, &level),
         Command::Show { level } => show(&levels, &level),
-        Command::List { json } => list(&levels, json),
+        Command::List => list(&levels),
     }
 }
 
@@ -90,7 +80,7 @@ fn find_level<'a>(levels: &'a [Level], name: &str) -> Result<&'a Level> {
         })
 }
 
-fn run(levels: &[Level], name: &str, json: bool) -> Result<()> {
+fn run(levels: &[Level], name: &str) -> Result<()> {
     let level = find_level(levels, name)?;
     let mut inputs = String::new();
     io::stdin()
@@ -101,11 +91,7 @@ fn run(levels: &[Level], name: &str, json: bool) -> Result<()> {
     for action in actions {
         game.apply(action);
     }
-    if json {
-        println!("{}", serde_json::to_string_pretty(&game.report())?);
-    } else {
-        println!("{}", game.describe());
-    }
+    println!("{}", game.describe());
     Ok(())
 }
 
@@ -115,14 +101,9 @@ fn show(levels: &[Level], name: &str) -> Result<()> {
     Ok(())
 }
 
-fn list(levels: &[Level], json: bool) -> Result<()> {
-    if json {
-        let names: Vec<_> = levels.iter().map(|level| &level.name).collect();
-        println!("{}", serde_json::to_string_pretty(&names)?);
-    } else {
-        for level in levels {
-            println!("{}", level.name);
-        }
+fn list(levels: &[Level]) -> Result<()> {
+    for level in levels {
+        println!("{}", level.name);
     }
     Ok(())
 }

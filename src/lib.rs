@@ -699,24 +699,6 @@ impl<'a> Game<'a> {
         output
     }
 
-    pub fn report(&self) -> GameReport {
-        let mut stones: Vec<Pos> = self.stones.iter().copied().collect();
-        stones.sort_by_key(|pos| (pos.y, pos.x));
-        GameReport {
-            level: self.level.name.clone(),
-            grid: self.render().lines().map(str::to_owned).collect(),
-            actors: self.actors.clone(),
-            stones,
-            selected_actor: self.selected,
-            trapped_actors: (0..self.actors.len())
-                .filter(|&index| self.actor_trapped(index))
-                .collect(),
-            doors_open: self.doors_open(),
-            won: self.won(),
-            actions: self.action_sequence(),
-        }
-    }
-
     pub fn describe(&self) -> String {
         let mut output = self.render_bordered();
         let actor = self.selected_actor();
@@ -747,19 +729,6 @@ impl<'a> Game<'a> {
 enum Object {
     Stone,
     Actor(usize),
-}
-
-#[derive(Debug, Serialize)]
-pub struct GameReport {
-    pub level: String,
-    pub grid: Vec<String>,
-    pub actors: Vec<Actor>,
-    pub stones: Vec<Pos>,
-    pub selected_actor: usize,
-    pub trapped_actors: Vec<usize>,
-    pub doors_open: bool,
-    pub won: bool,
-    pub actions: String,
 }
 
 pub fn level_map(levels: &[Level]) -> HashMap<&str, &Level> {
