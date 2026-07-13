@@ -1,5 +1,5 @@
 use std::fs;
-use std::io::{self, IsTerminal, Write};
+use std::io::{self, IsTerminal, Read, Write};
 use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result, anyhow, bail};
@@ -37,8 +37,6 @@ enum Command {
     /// 对关卡一次性执行输入序列并输出最终状态
     Run {
         level: String,
-        /// WASD/方向箭头移动，Z 撤销，R 重置，X 机关，C 切换角色
-        inputs: String,
 
         /// 输出便于程序读取的 JSON
         #[arg(long)]
@@ -62,11 +60,7 @@ fn main() -> Result<()> {
 
     match cli.command {
         Command::Play { level, save } => play(&levels, level.as_deref(), save.as_deref()),
-        Command::Run {
-            level,
-            inputs,
-            json,
-        } => run(&levels, &level, &inputs, json),
+        Command::Run { level, json } => run(&levels, &level, json),
         Command::Show { level } => show(&levels, &level),
         Command::List { json } => list(&levels, json),
     }
@@ -96,9 +90,13 @@ fn find_level<'a>(levels: &'a [Level], name: &str) -> Result<&'a Level> {
         })
 }
 
-fn run(levels: &[Level], name: &str, inputs: &str, json: bool) -> Result<()> {
+fn run(levels: &[Level], name: &str, json: bool) -> Result<()> {
     let level = find_level(levels, name)?;
-    let actions = parse_actions(inputs)?;
+    let mut inputs = String::new();
+    io::stdin()
+        .read_to_string(&mut inputs)
+        .context("无法从标准输入读取动作序列")?;
+    let actions = parse_actions(&inputs)?;
     let mut game = Game::new(level);
     for action in actions {
         game.apply(action);

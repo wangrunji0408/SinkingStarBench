@@ -16,9 +16,9 @@ cargo run -- play
 cargo run -- play 1-1
 cargo run -- play 1-1 --save solutions/1-1.txt
 
-# 一次性执行动作，坐标均为从 0 开始的 (x, y)
-cargo run -- run 1-1 'WASDD'
-cargo run -- run 1-1 'WASDD' --json
+# 从标准输入一次性执行动作，坐标均为从 0 开始的 (x, y)
+cargo run --release -- run 1-1 < solutions/1-1.txt
+printf 'WASDD' | cargo run --release -- run 1-1 --json
 
 # 展示、列举关卡
 cargo run -- show 2-3
