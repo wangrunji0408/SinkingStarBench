@@ -62,7 +62,7 @@ pub enum Tile {
 impl Tile {
     fn symbol(self) -> char {
         match self {
-            Self::Floor => '-',
+            Self::Floor => ' ',
             Self::Wall => '#',
             Self::Switch => '_',
             Self::Door => '|',
@@ -174,7 +174,7 @@ pub fn parse_levels(input: &str) -> Result<Vec<Level>, LevelError> {
             .enumerate()
             .filter_map(|(offset, row)| {
                 let row = row.trim_end_matches('\r');
-                (!row.trim().is_empty()).then_some((header + 2 + offset, row))
+                (!row.is_empty()).then_some((header + 2 + offset, row))
             })
             .collect();
         if rows.is_empty() {
@@ -198,7 +198,7 @@ pub fn parse_levels(input: &str) -> Result<Vec<Level>, LevelError> {
             for (x, character) in row.chars().enumerate() {
                 let pos = Pos { x, y };
                 let tile = match character {
-                    '-' => Tile::Floor,
+                    ' ' => Tile::Floor,
                     '#' => Tile::Wall,
                     '_' => Tile::Switch,
                     '|' => Tile::Door,
@@ -771,35 +771,43 @@ mod tests {
     }
 
     #[test]
+    fn rejects_legacy_dash_floor() {
+        assert!(matches!(
+            parse_levels("1-1\nA-.\n"),
+            Err(LevelError::InvalidTile { character: '-', .. })
+        ));
+    }
+
+    #[test]
     fn warrior_pushes_a_chain() {
-        let level = one_level("A$$-.");
+        let level = one_level("A$$ .");
         let mut game = Game::new(&level);
         assert_eq!(
             game.apply(Action::Move(Direction::Right)),
             ActionResult::Moved
         );
-        assert_eq!(game.render(), "-A$$.");
+        assert_eq!(game.render(), " A$$.");
         assert_eq!(
             game.apply(Action::Move(Direction::Right)),
             ActionResult::Moved
         );
-        assert_eq!(game.render(), "--A$$");
+        assert_eq!(game.render(), "  A$$");
     }
 
     #[test]
     fn thief_pulls_the_object_behind() {
-        let level = one_level("$B--.");
+        let level = one_level("$B  .");
         let mut game = Game::new(&level);
         game.apply(Action::Move(Direction::Right));
-        assert_eq!(game.render(), "-$B-.");
+        assert_eq!(game.render(), " $B .");
     }
 
     #[test]
     fn wizard_swaps_with_first_visible_object() {
-        let level = one_level("C--$.");
+        let level = one_level("C  $.");
         let mut game = Game::new(&level);
         game.apply(Action::Move(Direction::Right));
-        assert_eq!(game.render(), "$--C.");
+        assert_eq!(game.render(), "$  C.");
     }
 
     #[test]
@@ -809,14 +817,14 @@ mod tests {
         assert!(!game.doors_open());
         game.apply(Action::Move(Direction::Right));
         assert!(game.doors_open());
-        assert_eq!(game.render(), "-A$|.");
+        assert_eq!(game.render(), " A$|.");
         game.apply(Action::Move(Direction::Right));
         assert!(game.doors_open());
     }
 
     #[test]
     fn closing_door_crushes_stone() {
-        let level = one_level("A$_|--");
+        let level = one_level("A$_|  ");
         let mut game = Game::new(&level);
         game.apply(Action::Move(Direction::Right));
         game.apply(Action::Move(Direction::Right));
@@ -824,12 +832,12 @@ mod tests {
         game.apply(Action::Move(Direction::Left));
         assert!(!game.doors_open());
         assert!(game.stones().is_empty());
-        assert_eq!(game.render(), "-A_|--");
+        assert_eq!(game.render(), " A_|  ");
     }
 
     #[test]
     fn actor_caught_by_closing_door_cannot_move() {
-        let level = one_level("A$_|--");
+        let level = one_level("A$_|  ");
         let mut game = Game::new(&level);
         game.apply(Action::Move(Direction::Right));
         game.apply(Action::Move(Direction::Right));
@@ -847,13 +855,13 @@ mod tests {
 
     #[test]
     fn reset_can_be_undone_and_sequence_replays() {
-        let level = one_level("A--.");
+        let level = one_level("A  .");
         let mut game = Game::new(&level);
         game.apply(Action::Move(Direction::Right));
         game.apply(Action::Reset);
         assert_eq!(game.action_sequence(), "DR");
         assert_eq!(game.apply(Action::Undo), ActionResult::Undone);
-        assert_eq!(game.render(), "-A-.");
+        assert_eq!(game.render(), " A .");
         assert_eq!(game.action_sequence(), "D");
     }
 
