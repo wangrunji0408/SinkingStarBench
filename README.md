@@ -1,40 +1,33 @@
-# Order of the Sinking Star CLI
+# Sinking Star Bench
 
-Build:
+An LLM coding agent benchmark based on *Order of the Sinking Star*, a sokoban-style puzzle game. The task: **"Beat this game"** — understand the rules from a CLI binary and solve all 12 levels.
 
-```sh
-cargo build --release
-```
+## Results
 
-Each level in `levels/` is one map file. These `.txt` files are automatically scanned and embedded into the binary at build time — the finished binary does not need the level files at runtime.
+| Model | Provider | Solved | Time | Tokens | Context | Tool Calls | Cost |
+|-------|----------|:------:|------|--------|:-------:|:----------:|-----:|
+| **GPT-5.6 Sol** | Codex | **12/12** | 9 min | 2.9M | 950K | 46 | $7.97 |
+| **Claude Opus 4.8** | Claude Code | **12/12** | 36 min | 19.7M | 143K | 101 | $17.23 |
+| **DeepSeek v4 Pro** | Claude Code | 9/12 | 60 min | 48.3M | 234K | 201 | $0.62 |
+| **Claude Fable 5** | Claude Code | N/A | — | — | — | — | Refused |
 
-Commands:
+Pricing used: GPT-5.6 Sol $5/$30 per M input/output (cached 50% off), Claude Opus 4.8 $5/$25 (cache write $6.25, cache read $0.50), DeepSeek v4 Pro $0.435/$0.87 (cache read $0.0036).
 
-```sh
-# Play interactively (omit level name to choose from a list)
-cargo run -- play
-cargo run -- play 1-1
-cargo run -- play 1-1 --save solutions/1-1.txt
+### Key Observations
 
-# Execute an action sequence from stdin (coordinates are 0-based (x, y))
-cargo run --release -- run 1-1 < solutions/1-1.txt
-printf 'WASDD' | cargo run --release -- run 1-1
+- **GPT-5.6 Sol** is the clear winner: 7× fewer tokens than Opus, 17× fewer than DeepSeek. Its edge came from binary reverse-engineering (`strings`/`nm`) to deduce mechanics, then a one-shot BFS solver.
+- **Claude Opus 4.8** took the most methodical approach — use the game binary as an oracle → derive rules → build a native simulator → exhaustive BFS. Most expensive ($17.23) and slowest (36 min).
+- **DeepSeek v4 Pro** brute-forced with 48M tokens of trial-and-error. Solved 9/12 but couldn't crack the 3-button door puzzles (1-4/2-4/3-4). Despite massive token volume, it was the cheapest ($0.62) due to DeepSeek's ultra-low cache pricing ($0.0036/M).
+- **Claude Fable 5** refused to execute, triggering automatic fallback to Opus 4.8.
 
-# Show / list levels
-cargo run -- show 2-3
-cargo run -- list
-```
+## Game
 
-Input accepts `WASD` or `↑↓←→`, `Z` undo, `R` reset, `X` trigger (no effect yet), `C` switch actor. Whitespace and commas in batch input are ignored.
+A sokoban-like CLI puzzle with three character classes (Warrior, Thief, Wizard), push/pull/swap mechanics, and switch/door interactions across 12 levels.
 
-## Rules
+See [`levels/README.md`](levels/README.md) for full rules.
 
-- **Tiles**: Floor (` `), Wall (`#`), Switch (`_`), Door (`|`), Goal (`.`). Outside the map is a wall.
-- **Objects**: Stones (`$`) can be pushed, pulled, or swapped. Actors have unique abilities and can also trigger switches or stand on goals.
-- **Warrior** (`A`): Pushes a connected chain of objects ahead in the movement direction.
-- **Thief** (`B`): Pulls only the single object immediately behind when moving forward.
-- **Wizard** (`C`): Swaps places with the first object along the movement direction before a wall or closed door.
-- **Doors**: Open when at least one switch exists and every switch is occupied by a stone or actor. When doors close, stones on door tiles are crushed and actors become trapped (cannot move on their own).
-- **Win condition**: The set of actor positions equals the set of goal positions.
+[中文版](README-CN.md) | English
 
-`show`, `play`, and `run` display an implicit ring of outer walls around the map.
+## License
+
+MIT
