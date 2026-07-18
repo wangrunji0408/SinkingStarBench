@@ -8,7 +8,7 @@ An LLM coding agent benchmark based on *Order of the Sinking Star*, a sokoban-st
 
 | Model | Provider | Solved | Time | Tokens | Context | Tool Calls | Cost |
 |-------|----------|:------:|------|--------|:-------:|:----------:|-----:|
-| **GPT-5.6 Sol** | Codex | **12/12** | 9 min | 2.9M | 950K | 46 | $7.97 |
+| **GPT-5.6 Sol** | Codex | **12/12** | 9 min | 2.9M | 89K | 46 | $7.97 |
 | **Claude Opus 4.8** | Claude Code | **12/12** | 36 min | 9.5M | 143K | 100 | $8.28 |
 | **DeepSeek v4 Pro** | Claude Code | 9/12 | 60 min | 26.6M | 234K | 176 | $0.41 |
 | **Claude Fable 5** | Claude Code | N/A | — | — | — | — | Refused |
