@@ -14,3 +14,12 @@ thiserror = "2.0"
 
 [dev-dependencies]
 pretty_assertions = "1.4"
+
+# Keep the shipped binary opaque: the benchmark expects agents to discover the
+# rules by playing, not by reading `move_warrior` / `doors_open` out of the
+# symbol table. Stripping also drops the `src/lib.rs` panic paths.
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1
+panic = "abort"

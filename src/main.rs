@@ -10,15 +10,11 @@ use crossterm::execute;
 use crossterm::terminal::{
     Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode,
 };
-use sinking_star::{Action, Direction, Game, Level, embedded_levels, parse_actions, parse_levels};
+use sinking_star::{Action, Direction, Game, Level, embedded_levels, parse_actions};
 
 #[derive(Debug, Parser)]
 #[command(name = "sinking-star", version, about = "Order of the Sinking Star — level CLI")]
 struct Cli {
-    /// Use an external level collection file instead of embedded levels
-    #[arg(long, global = true, value_name = "FILE")]
-    levels: Option<PathBuf>,
-
     #[command(subcommand)]
     command: Command,
 }
@@ -46,7 +42,7 @@ enum Command {
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
-    let levels = load_levels(cli.levels.as_deref())?;
+    let levels = embedded_levels().context("failed to parse embedded levels")?;
 
     match cli.command {
         Command::Play { level, save } => play(&levels, level.as_deref(), save.as_deref()),
@@ -54,16 +50,6 @@ fn main() -> Result<()> {
         Command::Show { level } => show(&levels, &level),
         Command::List => list(&levels),
     }
-}
-
-fn load_levels(external: Option<&Path>) -> Result<Vec<Level>> {
-    if let Some(path) = external {
-        let source = fs::read_to_string(path)
-            .with_context(|| format!("failed to read level file {}", path.display()))?;
-        return parse_levels(&source)
-            .with_context(|| format!("failed to parse level file {}", path.display()));
-    }
-    embedded_levels().context("failed to parse embedded levels")
 }
 
 fn find_level<'a>(levels: &'a [Level], name: &str) -> Result<&'a Level> {
