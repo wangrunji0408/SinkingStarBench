@@ -10,20 +10,20 @@ An LLM coding agent benchmark based on *Order of the Sinking Star*, a sokoban-st
 |-------|----------|:------:|:------:|------|--------|:-------:|:----------:|-----:|
 | **GPT-5.6 Sol** | Codex | **12/12** | High | 40 min¹ | 5.5M | 147K | 34 | $17.19 |
 | **Claude Opus 5** | Claude Code | **12/12** | High | 16 min | 3.7M | 79K | 63 | $3.85 |
-| **Kimi K3** | Claude Code | **12/12** | Max | 25 min | 2.2M | 77K | 46 | $1.66 |
+| **Kimi K3** | Claude Code | **12/12** | High | 163 min² | 10.2M | 274K | 74 | $7.28 |
 | **Claude Opus 4.8** | Claude Code | **12/12** | ? | 36 min | 9.5M | 143K | 100 | $8.28 |
 | **DeepSeek v4 Pro** | Claude Code | 9/12 | Max | 60 min | 26.6M | 234K | 176 | $0.41 |
 | **Claude Fable 5** | Claude Code | N/A | N/A | — | — | — | — | Refused |
 
 ¹ Black-box only — binary reverse-engineering was explicitly disallowed. With reverse-engineering, GPT-5.6 Sol solved it in 9 min with 2.9M tokens at $7.97.
 
-Pricing used: GPT-5.6 Sol $5/$30 per M input/output (cached 50% off), Claude Opus 5 $5/$25 (cache write $6.25, cache read $0.50), Claude Opus 4.8 $5/$25 (cache write $6.25, cache read $0.50), Kimi K3 $3/$15 (cache $0.30), DeepSeek v4 Pro $0.435/$0.87 (cache read $0.0036).
+² With reverse-engineering, Kimi K3 solved it in 25 min with 2.2M tokens at $1.66.
 
 ### Key Observations
 
 - **GPT-5.6 Sol**¹ solved all 12 levels via pure gameplay experimentation (no binary introspection). At 40 min and $17.19, it's slower and costlier than Opus 5's black-box approach, which completed in 16 min at $3.85 with far fewer tokens.
 - **Claude Opus 5** matched GPT on all 12 levels using pure black-box experimentation — no disassembly. Built a simulator via differential fuzzing (1,440 random game sequences) against the binary until zero divergence, then BFS solver. At $3.85 it's the second cheapest 12/12 solver, with 2.6× fewer tokens than Opus 4.8.
-- **Kimi K3** solved all 12 levels with a BFS solver approach — reverse-engineered mechanics from the binary, wrote `solve.py`, and iteratively fixed edge cases. At $1.66 the cheapest overall, benefiting from 94% cache hit rate.
+- **Kimi K3**² solved all 12 levels in black-box mode — figuring out all three character mechanics (Warrior chain-push, Thief ranged-pull, Wizard position-swap) purely through gameplay observation, then solving all levels manually and programmatically. Took 163 min at $7.28.
 - **DeepSeek v4 Pro** brute-forced with 26.6M tokens of trial-and-error. Solved 9/12 but couldn't crack the 3-button door puzzles (1-4/2-4/3-4). Despite massive token volume, it was the cheapest ($0.41) due to DeepSeek's ultra-low cache pricing ($0.0036/M).
 - **Claude Fable 5** refused to execute, triggering automatic fallback to Opus 4.8.
 
