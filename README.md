@@ -20,15 +20,15 @@ An LLM coding agent benchmark based on *Order of the Sinking Star*, a sokoban-st
 
 ² With reverse-engineering, Kimi K3 solved it in 25 min with 2.2M tokens at $1.66.
 
-³ DeepSeek v4 Flash used 4 web searches for game mechanics and rules (no binary reverse-engineering).
+³ DeepSeek v4 Flash is **not a pure black-box run**: 4 web searches surfaced *Heroes of Sokoban* walkthroughs, which handed it the Thief-pull and Wizard-swap mechanics directly (the game shares those mechanics). The binary was never reverse-engineered, but the core mechanics knowledge came from external search rather than gameplay observation.
 
 ### Key Observations
 
 - **GPT-5.6 Sol**¹ solved all 12 levels via pure gameplay experimentation (no binary introspection). At 40 min and $17.19, it's slower and costlier than Opus 5's black-box approach, which completed in 16 min at $3.85 with far fewer tokens.
 - **Claude Opus 5** matched GPT on all 12 levels using pure black-box experimentation — no disassembly. Built a simulator via differential fuzzing (1,440 random game sequences) against the binary until zero divergence, then BFS solver. At $3.85 it's the second cheapest 12/12 solver, with 2.6× fewer tokens than Opus 4.8.
 - **Kimi K3**² solved all 12 levels in black-box mode — figuring out all three character mechanics (Warrior chain-push, Thief ranged-pull, Wizard position-swap) purely through gameplay observation, then solving all levels manually and programmatically. Took 163 min at $7.28.
-- **DeepSeek v4 Flash**³ solved all 12 levels in pure black-box mode at the lowest cost yet ($0.30) — building a pty-driven play harness, simulator, and BFS solver through trial-and-error. Took 117 min and 49.3M tokens (98.6% cache hit), with 4 web searches for game mechanics. Cheaper than even the 9/12 DeepSeek v4 Pro Preview ($0.41).
-- **DeepSeek v4 Pro Preview** brute-forced with 26.6M tokens of trial-and-error. Solved 9/12 but couldn't crack the 3-button door puzzles (1-4/2-4/3-4). Despite massive token volume, it was the cheapest ($0.41) due to DeepSeek's ultra-low cache pricing ($0.0036/M).
+- **DeepSeek v4 Flash**³ solved all 12 levels at the lowest cost yet ($0.30) — but with a major caveat: web searches surfaced *Heroes of Sokoban* walkthroughs that provided the Thief-pull and Wizard-swap mechanics directly, so it was not a pure black-box run. It still built a pty-driven play harness, simulator, and BFS solver through trial-and-error; took 117 min and 49.3M tokens (98.6% cache hit).
+- **DeepSeek v4 Pro Preview** brute-forced with 26.6M tokens of trial-and-error. Solved 9/12 but couldn't crack the 3-button door puzzles (1-4/2-4/3-4). Despite massive token volume, it cost only $0.41 thanks to DeepSeek's ultra-low cache pricing ($0.0036/M).
 - **Claude Fable 5** refused to execute, triggering automatic fallback to Opus 4.8.
 
 ## Game
