@@ -6,18 +6,18 @@ An LLM coding agent benchmark based on *Order of the Sinking Star*, a sokoban-st
 
 ## Results
 
-| # | Model | Provider | Solved | Effort | Time | Tokens | Context | Tool Calls | Cost |
-|---|-------|----------|:------:|:------:|------|--------|:-------:|:----------:|-----:|
-| 🏅 | **GPT-6 Astra** | Codex | **12/12** | High | 3 min | 0.46M | 31K | 18 | $1.02 |
-| 🥈 | **DeepSeek v4.1 Flash** | DSH | **12/12** | High | 8 min | 5.8M | 117K | 86 | $0.07 |
-| 🥉 | **Claude Fable 5.1** | CC | **12/12** | High | 11 min | 1.49M | 70K | 30 | $2.94 |
-| 4 | **Claude Opus 5** | CC | **12/12** | High | 16 min | 3.7M | 79K | 63 | $3.85 |
-| 5 | **DeepSeek v4 Pro** | DSH | **12/12** | High | 27 min | 3.8M | 98K | 81 | $0.08 |
-| 6 | **GPT-5.6 Sol** | Codex | **12/12** | High | 40 min | 5.5M | 147K | 34 | $17.19 |
-| 7 | **DeepSeek v4 Flash** | CC | **12/12** | Max | 117 min | 49.3M | 509K | 195 | $0.30 |
-| 8 | **Kimi K3** | CC | **12/12** | High | 163 min | 10.2M | 274K | 74 | $7.28 |
-| 9 | **DeepSeek v4 Pro Preview** | CC | 9/12 | Max | 60 min | 26.6M | 234K | 176 | $0.41 |
-| 10 | **Claude Fable 5** | CC | N/A | N/A | — | — | — | — | Refused |
+| # | Model | Effort | Provider | Solved | Time | Tokens | Context | Tool Calls | Cost |
+|---|-------|:------:|----------|:------:|------|--------|:-------:|:----------:|-----:|
+| 🏅 | **GPT-6 Astra** | High | Codex | **12/12** | 3 min | 0.46M | 31K | 18 | $1.02 |
+| 🥈 | **DeepSeek v4.1 Flash** | High | DSH | **12/12** | 8 min | 5.8M | 117K | 86 | $0.07 |
+| 🥉 | **Claude Fable 5.1** | High | CC | **12/12** | 11 min | 1.49M | 70K | 30 | $2.94 |
+| 4 | **Claude Opus 5** | High | CC | **12/12** | 16 min | 3.7M | 79K | 63 | $3.85 |
+| 5 | **DeepSeek v4 Pro** | High | DSH | **12/12** | 27 min | 3.8M | 98K | 81 | $0.08 |
+| 6 | **GPT-5.6 Sol** | High | Codex | **12/12** | 40 min | 5.5M | 147K | 34 | $17.19 |
+| 7 | **DeepSeek v4 Flash** | Max | CC | **12/12** | 117 min | 49.3M | 509K | 195 | $0.30 |
+| 8 | **Kimi K3** | High | CC | **12/12** | 163 min | 10.2M | 274K | 74 | $7.28 |
+| 9 | **DeepSeek v4 Pro Preview** | Max | CC | 9/12 | 60 min | 26.6M | 234K | 176 | $0.41 |
+| 10 | **Claude Fable 5** | N/A | CC | N/A | — | — | — | — | Refused |
 
 Harness: CC = Claude Code, DSH = DeepSeek Harness.
 
