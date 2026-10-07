@@ -13,11 +13,12 @@ An LLM coding agent benchmark based on *Order of the Sinking Star*, a sokoban-st
 | 🥉 | **Claude Fable 5.1** | High | CC | **12/12** | 11 min | 1.49M | 70K | 30 | $2.94 |
 | 4 | **Claude Opus 5** | High | CC | **12/12** | 16 min | 3.7M | 79K | 63 | $3.85 |
 | 5 | **DeepSeek v4 Pro** | High | DSH | **12/12** | 27 min | 3.8M | 98K | 81 | $0.08 |
-| 6 | **GPT-5.6 Sol** | High | Codex | **12/12** | 40 min | 5.5M | 147K | 34 | $17.19 |
-| 7 | **DeepSeek v4 Flash** | Max | CC | **12/12** | 117 min | 49.3M | 509K | 195 | $0.30 |
-| 8 | **Kimi K3** | High | CC | **12/12** | 163 min | 10.2M | 274K | 74 | $7.28 |
-| 9 | **DeepSeek v4 Pro Preview** | Max | CC | 9/12 | 60 min | 26.6M | 234K | 176 | $0.41 |
-| 10 | **Claude Fable 5** | N/A | CC | N/A | — | — | — | — | Refused |
+| 6 | **DeepSeek v4 Flash (local)** | Max | CC | **12/12** | 29 min | 12.1M | 253K | 94 | self-hosted |
+| 7 | **GPT-5.6 Sol** | High | Codex | **12/12** | 40 min | 5.5M | 147K | 34 | $17.19 |
+| 8 | **DeepSeek v4 Flash** | Max | CC | **12/12** | 117 min | 49.3M | 509K | 195 | $0.30 |
+| 9 | **Kimi K3** | High | CC | **12/12** | 163 min | 10.2M | 274K | 74 | $7.28 |
+| 10 | **DeepSeek v4 Pro Preview** | Max | CC | 9/12 | 60 min | 26.6M | 234K | 176 | $0.41 |
+| 11 | **Claude Fable 5** | N/A | CC | N/A | — | — | — | — | Refused |
 
 Harness: CC = Claude Code, DSH = DeepSeek Harness.
 
@@ -28,6 +29,7 @@ Harness: CC = Claude Code, DSH = DeepSeek Harness.
 - **Claude Fable 5.1** — pure black-box: rebuilt the game as a simulator from CLI observations, validated it by differential fuzzing (0 mismatches across all 12 levels), BFS-solved every level and confirmed each via `run` (`Won yes` ×12).
 - **Claude Opus 5** — pure black-box, no disassembly: built a simulator via differential fuzzing (1,440 random game sequences) against the binary until zero divergence, then a BFS solver.
 - **DeepSeek v4 Pro** — pure black-box on DeepSeek Harness with the **minimal agent preset** (only the `bash` tool available): zero web searches, mechanics inferred purely from gameplay, solver written and all 12 levels verified PASS.
+- **DeepSeek v4 Flash (local)** — pure black-box on a locally deployed instance (1M context, Max effort): zero web searches, no binary introspection. Mapped the CLI's rules by probing, rebuilt the game as its own simulator, then BFS/A*-solved all 12 levels and confirmed each one through the official `run` interface (`Won yes` ×12). Same model family as the API-hosted v4 Flash row above, but here the mechanics came purely from gameplay observation.
 - **GPT-5.6 Sol** — solved all 12 levels via pure gameplay experimentation, no binary introspection; slower and costlier than Opus 5's black-box approach.
 - **DeepSeek v4 Flash** — **not a pure black-box run**: web searches surfaced *Heroes of Sokoban* walkthroughs that handed it the Thief-pull and Wizard-swap mechanics directly (the two games share those mechanics). The binary was never reverse-engineered, but the core mechanics came from external search rather than gameplay observation. It still built a pty-driven play harness, simulator and BFS solver through trial and error.
 - **Kimi K3** — black-box: figured out all three character mechanics (Warrior chain-push, Thief ranged-pull, Wizard position-swap) purely through gameplay observation, then solved all levels manually and programmatically.
