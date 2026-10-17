@@ -9,23 +9,25 @@ An LLM coding agent benchmark based on *Order of the Sinking Star*, a sokoban-st
 | # | Model | Effort | Provider | Solved | Time | Tokens | Context | Tool Calls | Cost |
 |---|-------|:------:|----------|:------:|------|--------|:-------:|:----------:|-----:|
 | 🏅 | **GPT-6 Astra** | High | Codex | **12/12** | 3 min | 0.46M | 31K | 18 | $1.02 |
-| 🥈 | **DeepSeek v4.1 Flash** | High | DSH | **12/12** | 8 min | 5.8M | 117K | 86 | $0.07 |
-| 🥉 | **Claude Fable 5.1** | High | CC | **12/12** | 11 min | 1.49M | 70K | 30 | $2.94 |
-| 4 | **Claude Opus 5** | High | CC | **12/12** | 16 min | 3.7M | 79K | 63 | $3.85 |
-| 5 | **DeepSeek v4 Pro** | High | DSH | **12/12** | 27 min | 3.8M | 98K | 81 | $0.08 |
-| 6 | **DeepSeek v4 Flash (local)** | Max | CC | **12/12** | 29 min | 12.1M | 253K | 94 | self-hosted |
-| 7 | **GPT-5.6 Sol** | High | Codex | **12/12** | 40 min | 5.5M | 147K | 34 | $17.19 |
-| 8 | **DeepSeek v4 Flash** | Max | CC | **12/12** | 117 min | 49.3M | 509K | 195 | $0.30 |
-| 9 | **Kimi K3** | High | CC | **12/12** | 163 min | 10.2M | 274K | 74 | $7.28 |
-| 10 | **DeepSeek v4 Pro Preview** | Max | CC | 9/12 | 60 min | 26.6M | 234K | 176 | $0.41 |
-| 11 | **Claude Fable 5** | N/A | CC | N/A | — | — | — | — | Refused |
+| 🥈 | **DeepSeek v4.1 Flash 0910** | High | DSH | **12/12** | 8 min | 5.8M | 117K | 86 | $0.07 |
+| 🥉 | **DeepSeek v4.1 Flash 1017** | High | DSH | **12/12** | 9 min | 5.6M | 108K | 90 | $0.07 |
+| 4 | **Claude Fable 5.1** | High | CC | **12/12** | 11 min | 1.49M | 70K | 30 | $2.94 |
+| 5 | **Claude Opus 5** | High | CC | **12/12** | 16 min | 3.7M | 79K | 63 | $3.85 |
+| 6 | **DeepSeek v4 Pro** | High | DSH | **12/12** | 27 min | 3.8M | 98K | 81 | $0.08 |
+| 7 | **DeepSeek v4 Flash (local)** | Max | CC | **12/12** | 29 min | 12.1M | 253K | 94 | self-hosted |
+| 8 | **GPT-5.6 Sol** | High | Codex | **12/12** | 40 min | 5.5M | 147K | 34 | $17.19 |
+| 9 | **DeepSeek v4 Flash** | Max | CC | **12/12** | 117 min | 49.3M | 509K | 195 | $0.30 |
+| 10 | **Kimi K3** | High | CC | **12/12** | 163 min | 10.2M | 274K | 74 | $7.28 |
+| 11 | **DeepSeek v4 Pro Preview** | Max | CC | 9/12 | 60 min | 26.6M | 234K | 176 | $0.41 |
+| 12 | **Claude Fable 5** | N/A | CC | N/A | — | — | — | — | Refused |
 
 Harness: CC = Claude Code, DSH = DeepSeek Harness.
 
 ### Key Observations
 
 - **GPT-6 Astra** — the fastest 12/12 and the most token-efficient: pure black-box, zero web searches, no binary introspection. Probed the public CLI, inferred the Warrior/Thief/Wizard mechanics from gameplay alone, wrote a solver, and verified every level through the official `run` interface (`Won yes`).
-- **DeepSeek v4.1 Flash** — pure black-box on DeepSeek Harness with the **standard agent preset** (write/edit/read available): zero web searches, no binary introspection. Rebuilt the game as a simulator from CLI probing, validated it by differential fuzzing (~3,900 action sequences, 0 mismatches), then BFS-solved all 12 and confirmed each through the official `run` interface.
+- **DeepSeek v4.1 Flash 0910** — pure black-box on DeepSeek Harness with the **standard agent preset** (write/edit/read available): zero web searches, no binary introspection. Rebuilt the game as a simulator from CLI probing, validated it by differential fuzzing (~3,900 action sequences, 0 mismatches), then BFS-solved all 12 and confirmed each through the official `run` interface.
+- **DeepSeek v4.1 Flash 1017** — pure black-box on DeepSeek Harness with the **standard agent preset**: only `show` and `run` against the official CLI — no disassembly, no binary reads, no web access. Derived the Warrior/Thief/Wizard and pressure-plate rules by hand, wrote every level's action sequence itself, and confirmed each through `run` (`Won yes` ×12, echoed action counts matching the input).
 - **Claude Fable 5.1** — pure black-box: rebuilt the game as a simulator from CLI observations, validated it by differential fuzzing (0 mismatches across all 12 levels), BFS-solved every level and confirmed each via `run` (`Won yes` ×12).
 - **Claude Opus 5** — pure black-box, no disassembly: built a simulator via differential fuzzing (1,440 random game sequences) against the binary until zero divergence, then a BFS solver.
 - **DeepSeek v4 Pro** — pure black-box on DeepSeek Harness with the **minimal agent preset** (only the `bash` tool available): zero web searches, mechanics inferred purely from gameplay, solver written and all 12 levels verified PASS.
