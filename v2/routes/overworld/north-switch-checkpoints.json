@@ -1,0 +1,68 @@
+{
+  "prefix": "north.txt",
+  "radius": 9,
+  "checkpoints": [
+    {
+      "label": "Transmute the south tree with the druid",
+      "choices": [
+        [
+          "UUURRRRRRD"
+        ]
+      ],
+      "goal": {
+        "player": {
+          "skill_flags": 288
+        },
+        "objects": [
+          {
+            "kind": "Rock",
+            "properties": 1,
+            "position": [
+              78,
+              120,
+              0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "Bring the new rock onto the pressure plate with the bard",
+      "choices": [
+        [
+          "LLLLLLDRRRRR"
+        ],
+        [
+          "U",
+          "D"
+        ]
+      ],
+      "goal": {
+        "player": {
+          "skill_flags": 320
+        },
+        "objects": [
+          {
+            "kind": "Rock",
+            "properties": 1,
+            "position": [
+              78,
+              121,
+              0
+            ]
+          },
+          {
+            "kind": "Switch",
+            "uid": 106959990,
+            "pressed": true
+          },
+          {
+            "kind": "Gate",
+            "uid": 106959992,
+            "open": true
+          }
+        ]
+      }
+    }
+  ]
+}

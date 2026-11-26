@@ -1,0 +1,91 @@
+{
+  "prefix": "south.txt",
+  "after_visits": 1,
+  "radius": 4,
+  "checkpoints": [
+    {
+      "label": "Reach the north shore of the lily crossing",
+      "choices": [
+        [
+          "DLDDLLDDUURRRDDDDDLLLDLLURRRRRLLLDLDDDR"
+        ]
+      ],
+      "goal": {
+        "player": {
+          "position": [
+            77,
+            42,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "label": "Board the moving lily",
+      "goal": {
+        "player": {
+          "position": [
+            78,
+            42,
+            0
+          ]
+        },
+        "objects": [
+          {
+            "kind": "Lily",
+            "position": [
+              78,
+              42,
+              0
+            ]
+          }
+        ]
+      },
+      "explore": {
+        "actions": [
+          "T244",
+          "T278",
+          "R"
+        ],
+        "depth": 2
+      }
+    },
+    {
+      "label": "Get off on the southern shore",
+      "choices": [
+        [
+          "T91",
+          "T139",
+          "T163"
+        ],
+        [
+          "D"
+        ]
+      ],
+      "goal": {
+        "player": {
+          "position": [
+            79,
+            39,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "label": "Enter the two levels on the island",
+      "choices": [
+        [
+          "DDDDLVRRDDRRV"
+        ]
+      ],
+      "goal": {
+        "visited": [
+          "time_tutorial",
+          "skipping_pals"
+        ],
+        "standing_level": "skipping_pals"
+      }
+    }
+  ]
+}

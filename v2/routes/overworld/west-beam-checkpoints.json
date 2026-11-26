@@ -1,0 +1,143 @@
+{
+  "prefix": "west.txt",
+  "after_visits": 1,
+  "radius": 15,
+  "checkpoints": [
+    {
+      "label": "Power the west through-beam",
+      "choices": [
+        [
+          "RRRRRUURRRDDDDRDDDLLDLLLLLLLUULLLL"
+        ]
+      ],
+      "goal": {
+        "player": {
+          "position": [
+            57,
+            66,
+            0
+          ]
+        },
+        "objects": [
+          {
+            "kind": "Gem",
+            "position": [
+              56,
+              66,
+              0
+            ]
+          },
+          {
+            "kind": "Promesst_Light",
+            "position": [
+              70,
+              69,
+              0
+            ],
+            "powered": true,
+            "power_kind": 1
+          }
+        ]
+      }
+    },
+    {
+      "label": "Get below the blocking boulder",
+      "choices": [
+        [
+          "RRRRDDLLLLLLLUUUU"
+        ]
+      ],
+      "goal": {
+        "player": {
+          "position": [
+            54,
+            68,
+            0
+          ]
+        },
+        "objects": [
+          {
+            "kind": "Rock",
+            "position": [
+              54,
+              69,
+              0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "Clear both boulders from the beam",
+      "choices": [
+        [
+          "ULLDLULLLLLLLU"
+        ]
+      ],
+      "goal": {
+        "player": {
+          "position": [
+            48,
+            70,
+            0
+          ]
+        },
+        "objects": [
+          {
+            "kind": "Rock",
+            "position": [
+              51,
+              70,
+              0
+            ]
+          },
+          {
+            "kind": "Rock",
+            "position": [
+              54,
+              70,
+              0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "Power the double-step beam",
+      "choices": [
+        [
+          "DDDLLLLL"
+        ]
+      ],
+      "goal": {
+        "player": {
+          "position": [
+            43,
+            67,
+            0
+          ]
+        },
+        "objects": [
+          {
+            "kind": "Gem",
+            "position": [
+              42,
+              67,
+              0
+            ]
+          },
+          {
+            "kind": "Promesst_Light",
+            "position": [
+              42,
+              74,
+              0
+            ],
+            "powered": true,
+            "power_kind": 3
+          }
+        ]
+      }
+    }
+  ]
+}

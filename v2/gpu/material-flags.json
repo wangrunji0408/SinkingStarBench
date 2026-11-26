@@ -1,0 +1,12 @@
+{
+  "Dynamic": 1,
+  "Casts_Shadow": 2,
+  "Maya_Exported": 4,
+  "Editor_Only": 8,
+  "Non_Selectable": 16,
+  "VisibilityFlag1": 32,
+  "VisibilityFlag2": 64,
+  "VisibilityFlag3": 128,
+  "Enable_Internal_Outlines": 256,
+  "Edit_Master_Properties": 512
+}

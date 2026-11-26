@@ -1,0 +1,10 @@
+# Symbolic entry points used by the host. ? masks relocatable instruction operands.
+END_REGISTER_DEFAULTS 48 8d 05 ? ? ? ? 48 89 05 ? ? ? ? 48 8d 35 ? ? ? ? 4c 8d 35 ? ? ? ?
+END_START_SCENE 4c 89 f9 e8 ? ? ? ? 0f 57 c0 0f 29 84 24 60 05 00 00
+END_BUILD_GRIDS_A 49 8d 86 08 53 00 00 31 c9 0f 1f 44 00 00 89 08
+END_BUILD_GRIDS_B 41 80 be e8 3e 00 00 00 0f 84 ? ? ? ? 49 8b 86 f8 08 00 00
+END_BUILD_GRIDS_C 4c 89 e9 4c 89 f2 e8 ? ? ? ? 4c 8b 6c 24 58
+END_ROVER_SETUP 48 83 3d ? ? ? ? 00 0f 8f ? ? ? ? e9 ? ? ? ? f3 0f 10 05 ? ? ? ?
+END_SCHEDULE 48 89 f1 0f 28 ce e8 ? ? ? ? 48 8d 0d ? ? ? ? 4c 8d 84 24 20 09 00 00
+END_CLEAR_TRANSITION 48 8b 35 ? ? ? ? c6 86 79 7e 00 00 00 48 c7 05 ? ? ? ? 00 00 00 00
+END_STEP_PHASE 80 3d ? ? ? ? 00 74 ? c6 05 ? ? ? ? 00 48 8d 0d ? ? ? ?

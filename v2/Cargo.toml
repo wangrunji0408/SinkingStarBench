@@ -1,0 +1,31 @@
+[package]
+name = "sinking-star"
+version = "0.1.0"
+edition = "2024"
+default-run = "sinking-star"
+
+[[bin]]
+name = "sinking-star-challenge"
+path = "src/challenge.rs"
+
+[profile.challenge]
+inherits = "release"
+strip = "symbols"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+zstd = { version = "0.13.2", default-features = false }
+sha2 = "0.10"
+serde_json = { version = "1", features = ["preserve_order", "float_roundtrip"] }
+[build-dependencies]
+zstd = { version = "0.13.2", default-features = false }
+sha2 = "0.10"
+serde_json = {version="1", features=["preserve_order"]}
+
+[dev-dependencies]
+libtest-mimic = "0.8"
+
+[[test]]
+name = "solutions"
+path = "tests/solutions.rs"
+harness = false

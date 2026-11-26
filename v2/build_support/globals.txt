@@ -1,0 +1,10 @@
+# name displacement-offset next-instruction-offset signature
+RUN_KEY 2 7 80 3d ? ? ? ? 00 0f 95 c1 0a 0d ? ? ? ? 74 ? 31 c9
+SLOW_KEY 2 6 0a 05 ? ? ? ? f3 0f 10 0d ? ? ? ? 74 ? 0f 28 c1
+GRAPH_CATALOG 3 7 48 8d 15 ? ? ? ? 4c 8d 44 24 58 4c 8d 4c 24 48
+CURRENT_WORLD 3 7 48 8b 1d ? ? ? ? 48 8b 8b 40 07 00 00 48 85 c9
+WORLD_SCRATCH 3 7 48 8b 05 ? ? ? ? 80 b8 d0 00 00 00 00 74 ? c3
+MESH_ALLOCATOR 3 7 48 3b 05 ? ? ? ? 0f 29 84 24 f0 02 00 00 0f 84 ? ? ? ?
+MESH_CATALOG 3 7 48 8d 15 ? ? ? ? 4c 89 e1 49 89 f0 49 89 f1 e8 ? ? ? ?
+MESH_HASH_TABLE 3 7 48 8b 05 ? ? ? ? eb ? 48 8b 05 ? ? ? ? 48 85 c0 7e ?
+EFFECTS_WORLD 3 7 48 8b 05 ? ? ? ? 48 83 b8 a8 08 00 00 00 7e ?

@@ -1,0 +1,73 @@
+{
+  "prefix": "east.txt",
+  "after_visits": 4,
+  "radius": 8,
+  "checkpoints": [
+    {
+      "label": "Place the first mirror and align with its south arm",
+      "choices": [
+        [
+          "URRR"
+        ],
+        [
+          "UD",
+          "UUDD"
+        ]
+      ],
+      "goal": {
+        "player": {
+          "position": [
+            100,
+            69,
+            0
+          ],
+          "queued_inputs": 0
+        },
+        "objects": [
+          {
+            "kind": "Mirror",
+            "position": [
+              100,
+              72,
+              0
+            ],
+            "angle": 90
+          }
+        ]
+      }
+    },
+    {
+      "label": "Land on the east island",
+      "choices": [
+        [
+          "X",
+          "R"
+        ]
+      ],
+      "goal": {
+        "player": {
+          "position": [
+            103,
+            72,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "label": "Enter both unlocked levels",
+      "choices": [
+        [
+          "DDVRV"
+        ]
+      ],
+      "goal": {
+        "visited": [
+          "mirror_5",
+          "mirror_6_alt"
+        ],
+        "standing_level": "mirror_6_alt"
+      }
+    }
+  ]
+}

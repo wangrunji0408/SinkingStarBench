@@ -2,52 +2,65 @@
 
 [中文版](README-CN.md) | English
 
-An LLM coding agent benchmark based on *Order of the Sinking Star*, a sokoban-style puzzle game. The task: **"Beat this game. Reverse-engineering the binary is forbidden."** — infer the rules from the game's own CLI and solve all 12 levels.
+An LLM coding-agent benchmark built on *Order of the Sinking Star*, a sokoban-style puzzle game. The agent gets one binary and an empty directory, and must beat it **without reverse-engineering the binary** — learning every rule by feeding routes to the game's own `replay` command and reading back the public state.
 
-## Results
+The benchmark has two versions, kept side by side:
 
-| # | Model | Effort | Provider | Solved | Time | Tokens | Context | Tool Calls | Cost |
-|---|-------|:------:|----------|:------:|------|--------|:-------:|:----------:|-----:|
-| 🏅 | **GPT-6.1 Sol** | High | Codex | **12/12** | 2 min | 0.59M | 42K | 16 | $0.20 |
-| 🥈 | **GPT-6 Astra** | High | Codex | **12/12** | 3 min | 0.46M | 31K | 18 | $1.02 |
-| 🥉 | **DeepSeek v4.1 Flash 0910** | High | DSH | **12/12** | 8 min | 5.8M | 117K | 86 | $0.07 |
-| 4 | **DeepSeek v4.1 Flash 1017** | High | DSH | **12/12** | 9 min | 5.6M | 108K | 90 | $0.07 |
-| 5 | **Claude Fable 5.1** | High | CC | **12/12** | 11 min | 1.49M | 70K | 30 | $2.94 |
-| 6 | **Claude Opus 5** | High | CC | **12/12** | 16 min | 3.7M | 79K | 63 | $3.85 |
-| 7 | **GPT-6 Luna** | High | Codex | **12/12** | 17 min | 8.0M | 146K | 96 | $0.14 |
-| 8 | **DeepSeek v4 Pro** | High | DSH | **12/12** | 27 min | 3.8M | 98K | 81 | $0.08 |
-| 9 | **DeepSeek v4 Flash (local)** | Max | CC | **12/12** | 29 min | 12.1M | 253K | 94 | self-hosted |
-| 10 | **GPT-5.6 Sol** | High | Codex | **12/12** | 40 min | 5.5M | 147K | 34 | $17.19 |
-| 11 | **DeepSeek v4 Flash** | Max | CC | **12/12** | 117 min | 49.3M | 509K | 195 | $0.30 |
-| 12 | **Kimi K3** | High | CC | **12/12** | 163 min | 10.2M | 274K | 74 | $7.28 |
-| 13 | **DeepSeek v4 Pro Preview** | Max | CC | 9/12 | 60 min | 26.6M | 234K | 176 | $0.41 |
-| 14 | **Claude Fable 5** | N/A | CC | N/A | — | — | — | — | Refused |
+| Version | Challenge | Runs | README |
+|---|---|---|---|
+| **v1** | 12 fixed levels, 3 hours | 14 models / 6 agents | [`v1/README.md`](v1/README.md) |
+| **v2** | Overworld + 90+ levels, 3-hour window | 6 models / 4 agents | this page |
 
-Harness: CC = Claude Code, DSH = DeepSeek Harness.
+---
 
-### Key Observations
+## v2 (2026-11)
 
-- **GPT-6.1 Sol** — the fastest 12/12 so far, pure black-box: 16 exec calls total. Probed `show`/`run` only, wrote its own simulator from the CLI maps, validated the movement rules with random probes, then A*-solved all 12 levels and saved every sequence under `solutions/` (replayed with `replay_solutions.py`, `Won yes` ×12).
-- **GPT-6 Astra** — the most token-efficient 12/12: pure black-box, zero web searches, no binary introspection. Probed the public CLI, inferred the Warrior/Thief/Wizard mechanics from gameplay alone, wrote a solver, and verified every level through the official `run` interface (`Won yes`).
-- **DeepSeek v4.1 Flash 0910** — pure black-box on DeepSeek Harness with the **standard agent preset** (write/edit/read available): zero web searches, no binary introspection. Rebuilt the game as a simulator from CLI probing, validated it by differential fuzzing (~3,900 action sequences, 0 mismatches), then BFS-solved all 12 and confirmed each through the official `run` interface.
-- **DeepSeek v4.1 Flash 1017** — pure black-box on DeepSeek Harness with the **standard agent preset**: only `show` and `run` against the official CLI — no disassembly, no binary reads, no web access. Derived the Warrior/Thief/Wizard and pressure-plate rules by hand, wrote every level's action sequence itself, and confirmed each through `run` (`Won yes` ×12, echoed action counts matching the input).
-- **Claude Fable 5.1** — pure black-box: rebuilt the game as a simulator from CLI observations, validated it by differential fuzzing (0 mismatches across all 12 levels), BFS-solved every level and confirmed each via `run` (`Won yes` ×12).
-- **Claude Opus 5** — pure black-box, no disassembly: built a simulator via differential fuzzing (1,440 random game sequences) against the binary until zero divergence, then a BFS solver.
-- **GPT-6 Luna** — pure black-box: no web searches, no binary introspection. Inferred the three roles' movement rules from `show`/`run` probing, then ran per-level Python BFS solvers and confirmed every level through the official `run` interface (`Won yes` ×12).
-- **DeepSeek v4 Pro** — pure black-box on DeepSeek Harness with the **minimal agent preset** (only the `bash` tool available): zero web searches, mechanics inferred purely from gameplay, solver written and all 12 levels verified PASS.
-- **DeepSeek v4 Flash (local)** — pure black-box on a locally deployed instance (1M context, Max effort): zero web searches, no binary introspection. Mapped the CLI's rules by probing, rebuilt the game as its own simulator, then BFS/A*-solved all 12 levels and confirmed each one through the official `run` interface (`Won yes` ×12). Same model family as the API-hosted v4 Flash row above, but here the mechanics came purely from gameplay observation.
-- **GPT-5.6 Sol** — solved all 12 levels via pure gameplay experimentation, no binary introspection; slower and costlier than Opus 5's black-box approach.
-- **DeepSeek v4 Flash** — **not a pure black-box run**: web searches surfaced *Heroes of Sokoban* walkthroughs that handed it the Thief-pull and Wizard-swap mechanics directly (the two games share those mechanics). The binary was never reverse-engineered, but the core mechanics came from external search rather than gameplay observation. It still built a pty-driven play harness, simulator and BFS solver through trial and error.
-- **Kimi K3** — black-box: figured out all three character mechanics (Warrior chain-push, Thief ranged-pull, Wizard position-swap) purely through gameplay observation, then solved all levels manually and programmatically.
-- **DeepSeek v4 Pro Preview** — brute-forced with trial-and-error, inferring rules purely from experiments. Solved 9/12 but never cracked the 3-button door puzzles (1-4/2-4/3-4).
-- **Claude Fable 5** — refused to execute the task.
+v2 replaces the fixed 12-level set with the full game: an **overworld map** that gates levels behind keys, doors, freezers and elevators, plus a per-level `target_level_key`. The agent starts from `intro`, must reach the overworld, collect keys by entering each level and pressing `V`, and then solve as many levels as it can. Score is **levels solved first, total frames second**.
 
-## Game
+Everything runs on the same binary (`sinking-star-challenge`, built from [`v2/`](v2/README.md)); harnesses differ only in how the agent is driven.
 
-A sokoban-like CLI puzzle with three character classes (Warrior, Thief, Wizard), push/pull/swap mechanics, and switch/door interactions across 12 levels.
+### Results
 
-See [`levels/README.md`](levels/README.md) for full rules.
+| # | Model | Harness | Effort | Solved | Frames | Time | Map entries | Tokens in / out |
+|:-:|-------|:-------:|:------:|:------:|-------:|:----:|:-----------:|-----------------|
+| 🥇 | **GPT-6.2 Astra** | Codex | High | **93** | 65,617 | 180 min | 98 | 75.2M / 0.30M |
+| 🥈 | **Claude Fable 5.2** | Claude Code | High | **69** | 36,879 | 180 min | 64 | 199.9M / 0.78M |
+| 🥉 | **GPT-6.2 Sol** | Codex | High | **61** | 35,241 | 179 min | 87 | 100.1M / 0.47M |
+| 4 | **Claude Opus 5.5** | Claude Code | High | 22 | 11,203 | 193 min | 22 | 96.3M / 0.28M |
+| 5 | **Gemini 4 Carbon** | pi | High | 21 | 10,589 | 180 min | 22 | 68.5M / 0.33M |
+| 6 | **DeepSeek V4.1 Flash** | DSH | High | 18 | 9,705 | 168 min | 17 | 301.5M / 1.23M |
 
-## License
+`Tokens in` includes prompt tokens and cache reads; harnesses report usage differently, so treat the column as an order-of-magnitude signal, not a precise comparison.
 
-MIT
+### What separates the runs
+
+**The map, not the puzzles, is the ceiling.** Map entries are a hard upper bound on the score: the runs that stopped at 17 / 22 entries topped out at 18 / 21–22 levels, while the 98-entry run reached 93. Entry count tracks the score far better than any measure of per-level skill.
+
+**Mechanic discovery is the unlock, not the search.** Every breakthrough in the logs lines up with a newly understood rule, and the solve follows within minutes:
+
+- *A closed gate destroys crystals standing on it* → DeepSeek solved `heroes1_16_v3` with 78 keys four minutes later.
+- *A wand pushes rocks through walls*; *two sunk mirrors are needed to reach a reflection position* → Astra cleared `right_hand_man` and `mirror_6_alt` immediately after.
+- *Sight can bounce off a second mirror*; *a plain mirror bends sight but does not teleport* → Fable solved `mirror_10_alt2` (459 frames) and `mundane_mirror` (1,007 frames) in one pass.
+- Opus 5.5's own diagnosis when its abstract model stalled while the real simulator kept exploring: *"my model has 2,300 states, the real one has 4,100 — I'm missing a mechanic."* It was right; adding the rule ended a 70-minute block.
+
+The converse also holds: Fable's longest plateau (21 minutes, 08:07–08:28) was not solving but **map modelling** — patching its simulator for `Elevator_Platform`/`Lily` entities and probing stand positions with `T0…T300`.
+
+**Frame efficiency is a separate, later game.** Astra and Fable both spent much of their final hour compressing routes instead of finding new levels. Opus found that turns are slower than straight moves and added a turn penalty to its shortest-path search (−1–4% per level); it also cut `intro` to 2,158 frames by noticing that reading a sign only requires facing it, so the `T120` waits Astra and Sol kept were pure waste.
+
+### Reproducing
+
+```sh
+cd v2
+cargo build --locked --profile challenge --bin sinking-star-challenge
+cp target/x86_64-apple-darwin/challenge/sinking-star-challenge .
+```
+
+macOS on Apple Silicon (Rosetta 2), with the Windows Steam build of the game available at build time. The resulting binary needs no game install to run.
+
+Scoring, key handling and replay format are documented in [`v2/README.md`](v2/README.md).
+
+### Caveats
+
+- Runs used two builds of the challenge binary: v2's overworld key mechanism is newer than the one used by the first four runs. Cross-run comparisons should be read with that in mind.
+- Codex and `claude -p` are single-turn harnesses and stop when the model decides it is done; DSH was launched through a goal loop that kept re-prompting. Time used therefore reflects harness behaviour as much as model behaviour.
+- Per-level timestamps come from APFS birth times of the submitted route files. Rewritten routes keep their birth time, so frame compression does not inflate later progress.

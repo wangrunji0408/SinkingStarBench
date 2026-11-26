@@ -1,3 +1,5 @@
 /target/
+/v2/target/
 .DS_Store
 /player
+/v1/player
