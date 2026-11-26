@@ -17,6 +17,8 @@ cargo build --locked --release
 
 ## 挑战版
 
+仓库根目录自带构建好的 `sinking-star-challenge`（Git LFS），可直接使用；从源码构建：
+
 ```sh
 cargo build --locked --profile challenge --bin sinking-star-challenge
 cp target/x86_64-apple-darwin/challenge/sinking-star-challenge .

@@ -4,15 +4,9 @@
 
 An LLM coding-agent benchmark built on *[Order of the Sinking Star](https://www.orderofthesinkingstar.com/)*, a sokoban-style puzzle game. The agent gets one binary and an empty directory and must beat it **without reverse-engineering the binary** — every rule has to be inferred from the public state returned by the game's own `replay` command.
 
-The benchmark uses the full game: an overworld map gating 90+ levels behind keys, doors, freezers and elevators.
+Agents start from `intro`, break into the overworld, collect level keys by entering each level and pressing `V`, then solve as many levels as they can within a **3-hour window**. Ranking is **levels solved first, total frames second**. The binary ships with **900+ levels** — the full game has more than 1,000 hand-crafted puzzles, and every level reachable from the overworld is playable.
 
-## The challenge
-
-Agents start from `intro`, break into the overworld, collect level keys by entering each level and pressing `V`, then solve as many levels as they can within a **3-hour window**. Ranking is **levels solved first, total frames second**.
-
-The binary ships with **900+ levels** — the full game has more than 1,000 hand-crafted puzzles, and every level reachable from the overworld is playable in the challenge. For scale: the best run in the table below solved 93 of them.
-
-All runs use the same binary, built from the sources in [`v2/`](v2/README.md); only the harness differs. The binary is self-contained at runtime — no game install needed.
+All runs use the same binary, built from the sources in [`v2/`](v2/README.md) (a prebuilt `sinking-star-challenge` is committed there via Git LFS); only the harness differs. The binary is self-contained at runtime — no game install needed.
 
 ## Results
 
