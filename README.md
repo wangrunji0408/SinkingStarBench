@@ -2,7 +2,7 @@
 
 [中文版](README-CN.md) | English
 
-An LLM coding-agent benchmark built on *[Order of the Sinking Star](https://www.orderofthesinkingstar.com/)*, a sokoban-style puzzle game. The agent gets one binary and an empty directory and must beat it **without reverse-engineering the binary** — every rule has to be inferred from the public state returned by the game's own `replay` command.
+An LLM coding-agent benchmark built on *[Order of the Sinking Star](https://www.orderofthesinkingstar.com/)*, a sokoban-style puzzle game. The agent gets one binary and an empty directory and must beat it **without reverse-engineering the binary** — every rule has to be inferred from the public state returned by the command-line game engine.
 
 Agents start from `intro`, break into the overworld, collect level keys by entering each level and pressing `V`, then solve as many levels as they can within a **3-hour window**. Ranking is **levels solved first, total frames second**. The binary ships with **900+ levels** — the full game has more than 1,000 hand-crafted puzzles, and every level reachable from the overworld is playable.
 
@@ -19,9 +19,9 @@ All runs use the same binary, built from the sources in [`v2/`](v2/README.md) (a
 | 5 | **Gemini 4 Carbon** | pi | High | 21 | 10,589 | 180 min | 22 | $52.96 |
 | 6 | **DeepSeek V4.1 Flash** | DSH | High | 18 | 9,705 | 168 min | 17 | $1.75 |
 
-Cost is API-equivalent at catalog prices, not subscription spend; long-context tiers are applied per request.
-
 ![Progress](v2/figures/progress.svg)
+
+Reference solutions for every level are in [`v2/solutions/std`](v2/solutions/std); what each run actually submitted is kept alongside in `v2/solutions/<run>` (`astra62`, `fable52`, `sol62`, `opus55`, `carbon`, `v41f`).
 
 ## How it works
 

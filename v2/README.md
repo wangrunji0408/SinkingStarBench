@@ -29,20 +29,22 @@ cp target/x86_64-apple-darwin/challenge/sinking-star-challenge .
 挑战版从 `intro` 开始，无需密钥。成功进入大地图时返回 `won: true`、`target_level: "overworld"` 和 `target_level_key`。回放 `overworld` 时提供该密钥。地图回放会把在已解锁入口按 `V` 视为立即通关，以便继续探索；`playable_levels` 按首次进入的顺序列出本次路线中按 `V` 进入过的关卡，`level_keys` 给出这些关卡各自的密钥。单关回放只需提供目标关卡密钥，同一份二进制的密钥可重复使用。
 
 ```sh
-./sinking-star-challenge replay intro -i solutions/intro.txt
-./sinking-star-challenge replay overworld --key "$OVERWORLD_KEY" -i solutions/overworld.txt
-./sinking-star-challenge replay heroes1_1 --key "$HEROES1_1_KEY" -i solutions/heroes1_1.txt
+./sinking-star-challenge replay intro -i solutions/std/intro.txt
+./sinking-star-challenge replay overworld --key "$OVERWORLD_KEY" -i solutions/std/overworld.txt
+./sinking-star-challenge replay heroes1_1 --key "$HEROES1_1_KEY" -i solutions/std/heroes1_1.txt
 ```
 
 也可以把密钥写在路线文件首行 `# 密钥`，下一行写按键串（末尾不加换行），回放时即可省略 `--key`。两处都提供时密钥必须一致；`intro` 不需要密钥行。
 
-用 `./sinking-star-challenge check solutions` 对目录计分，输出一行 JSON，包含 `solved_count`、`total_frames` 与按关卡 ID 列出的 `levels`（每项有 `won`、通关帧数 `frames` 或未计分原因 `reason`）。`intro` 进入大地图计一关；其他关卡必须在地图路线中进入且本关解法获胜才计分；`overworld.txt` 本身不计分（`map_only`）。
+用 `./sinking-star-challenge check solutions/std` 对目录计分，输出一行 JSON，包含 `solved_count`、`total_frames` 与按关卡 ID 列出的 `levels`（每项有 `won`、通关帧数 `frames` 或未计分原因 `reason`）。`intro` 进入大地图计一关；其他关卡必须在地图路线中进入且本关解法获胜才计分；`overworld.txt` 本身不计分（`map_only`）。
+
+`solutions/` 按来源分目录：`std/` 是覆盖全部 900 关的参考解；其余是各次挑战实际提交的解法——`sol62/`、`astra62/`、`fable52/`、`opus55/`、`carbon/`、`v41f/`。
 
 ## 回放
 
 ```sh
 sinking-star list-levels  # 每行一个关卡名
-sinking-star replay heroes1_1 -i solutions/heroes1_1.txt --trace trace.bin
+sinking-star replay heroes1_1 -i solutions/std/heroes1_1.txt --trace trace.bin
 echo -n 'RT30X' | sinking-star replay heroes1_1
 ```
 
@@ -67,22 +69,22 @@ echo -n 'RT30X' | sinking-star replay heroes1_1
 `--instant-solve` 模式会在 `V` 前等待已排队的操作与角色移动完成；站在可进入入口上按 `V` 才计数，只路过或在锁定入口按键都不算。随后按入口的 AND/OR 前置条件更新后续入口与冰障，`visited` 按经过顺序记录首次通关。
 
 ```sh
-sinking-star replay overworld --instant-solve -i solutions/overworld.txt
-sinking-star render overworld --instant-solve -i solutions/overworld.txt -o overworld.mp4
+sinking-star replay overworld --instant-solve -i solutions/std/overworld.txt
+sinking-star render overworld --instant-solve -i solutions/std/overworld.txt -o overworld.mp4
 ```
 
 普通版可加 `--inspect-radius 8` 查看附近机关的实时状态，[路线说明](routes/overworld/README.md) 给出了利用这些状态筛选、扩展候选输入的示例。
 
-仓库自带的[路线](solutions/overworld.txt) 经过 [95 个不同入口](solutions/overworld.json)，包含三次往返小世界已发现传送点；[支线说明](routes/overworld/README.md) 给出睡莲、移动光束、双镜分身与传送点的例子。
+仓库自带的[路线](solutions/std/overworld.txt) 经过 [95 个不同入口](solutions/std/overworld.json)，包含三次往返小世界已发现传送点；[支线说明](routes/overworld/README.md) 给出睡莲、移动光束、双镜分身与传送点的例子。
 
 ## 导出视频和截图
 
 程序会尝试探测常见的 Steam 安装、`/Applications` 下的 CrossOver 与系统目录中的 D3DMetal；未探测到或需指定其他安装时，用 `GAME_ROOT` 和 `D3DMETAL_PATH`。
 
 ```sh
-sinking-star render heroes1_1 -i solutions/heroes1_1.txt --resolution 1600x900 --fps 60 -o heroes1_1.mp4
-sinking-star render heroes1_1 -i solutions/heroes1_1.txt --resolution 960x540 -o final.png
-sinking-star render --inputs solutions/heroes1_1.txt solutions/heroes2_2b.txt --output-dir videos --jobs 2 --resolution 960x540 --fps 20
+sinking-star render heroes1_1 -i solutions/std/heroes1_1.txt --resolution 1600x900 --fps 60 -o heroes1_1.mp4
+sinking-star render heroes1_1 -i solutions/std/heroes1_1.txt --resolution 960x540 -o final.png
+sinking-star render --inputs solutions/std/heroes1_1.txt solutions/std/heroes2_2b.txt --output-dir videos --jobs 2 --resolution 960x540 --fps 20
 ```
 
 导出视频或截图必须用 `-o PATH` 指定输出。视频默认 1280×720、30 fps 的 HEVC（VideoToolbox 恒定质量，`--quality 0..100`）；`--fps` 只用于视频，必须是 60 的正因数，不改变游戏 60 帧/秒的步进；`--resolution` 宽高须在 16 到 8192 之间，HEVC 还要求偶数。输出名用 `.png`/`.jpg` 时只导出最后一帧。

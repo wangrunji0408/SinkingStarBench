@@ -2,7 +2,7 @@
 
 中文版 | [English](README.md)
 
-基于推箱子式解谜游戏《沉星之序》（[Order of the Sinking Star](https://www.orderofthesinkingstar.com/)）的 LLM coding agent 评测。给 agent 一个二进制文件和一个空目录，要求在**不逆向二进制**的前提下通关——所有规则只能通过把路线喂给游戏自带的 `replay` 命令、再读回公开状态来推断。
+基于推箱子式解谜游戏《沉星之序》（[Order of the Sinking Star](https://www.orderofthesinkingstar.com/)）的 LLM coding agent 评测。给 agent 一个二进制文件和一个空目录，要求在**不逆向二进制**的前提下通关——所有规则只能通过把路线喂给命令行游戏引擎、再读回公开状态来推断。
 
 Agent 从 `intro` 起步，进入大地图，靠进关按 `V` 收集密钥，然后在 **3 小时窗口**内尽可能多地解题。排名规则是**先比通关数，再比总帧数**。二进制内置 **900 多个关卡**——完整游戏有 1000 多个手工谜题，凡是从大地图能走到的关卡都可解。
 
@@ -19,9 +19,9 @@ Agent 从 `intro` 起步，进入大地图，靠进关按 `V` 收集密钥，然
 | 5 | **Gemini 4 Carbon** | pi | 高 | 21 | 10,589 | 180 分 | 22 | $52.96 |
 | 6 | **DeepSeek V4.1 Flash** | DSH | 高 | 18 | 9,705 | 168 分 | 17 | $1.75 |
 
-成本按目录价折算的 API 等价花费，不是订阅实扣；长上下文档位按每个请求单独判断。
-
 ![进度](v2/figures/progress.svg)
+
+全部关卡的**参考解法**在 [`v2/solutions/std`](v2/solutions/std)；各次挑战实际提交的解法放在同级目录 `v2/solutions/<run>`（`astra62`、`fable52`、`sol62`、`opus55`、`carbon`、`v41f`）。
 
 ## 实现原理
 
