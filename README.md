@@ -13,15 +13,16 @@ All runs use the same binary, built from the sources in [`v2/`](v2/README.md) (a
 | # | Model | Harness | Thinking | Solved | Frames | Time | Map entries | Cost |
 |:-:|-------|:-------:|:--------:|:------:|-------:|:----:|:-----------:|-----:|
 | 🥇 | **GPT-6.2 Astra** | Codex | High | **93** | 65,617 | 180 min | 98 | $45.85 |
-| 🥈 | **Claude Fable 5.2** | Claude Code | High | **69** | 36,879 | 180 min | 64 | $109.29 |
-| 🥉 | **GPT-6.2 Sol** | Codex | High | **61** | 35,241 | 179 min | 87 | $24.04 |
-| 4 | **Claude Opus 5.5** | Claude Code | High | 22 | 11,203 | 193 min | 22 | $51.61 |
-| 5 | **Gemini 4 Carbon** | pi | High | 21 | 10,589 | 180 min | 22 | $52.96 |
-| 6 | **DeepSeek V4.1 Flash** | DSH | High | 18 | 9,705 | 168 min | 17 | $1.75 |
+| 🥈 | **Gemini 4 Neon** | pi | High | **87** | 52,523 | 180 min | 96 | $41.42 |
+| 🥉 | **Claude Fable 5.2** | Claude Code | High | **69** | 36,879 | 180 min | 64 | $109.29 |
+| 4 | **GPT-6.2 Sol** | Codex | High | 61 | 35,241 | 179 min | 87 | $24.04 |
+| 5 | **Claude Opus 5.5** | Claude Code | High | 22 | 11,203 | 193 min | 22 | $51.61 |
+| 6 | **Gemini 4 Carbon** | pi | High | 21 | 10,589 | 180 min | 22 | $52.96 |
+| 7 | **DeepSeek V4.1 Flash** | DSH | High | 18 | 9,705 | 168 min | 17 | $1.75 |
 
 ![Progress](v2/figures/progress.svg)
 
-Reference solutions for every level are in [`v2/solutions/std`](v2/solutions/std); what each run actually submitted is kept alongside in `v2/solutions/<run>` (`astra62`, `fable52`, `sol62`, `opus55`, `carbon`, `v41f`).
+Reference solutions for every level are in [`v2/solutions/std`](v2/solutions/std); what each run actually submitted is kept alongside in `v2/solutions/<run>` (`astra62`, `neon`, `fable52`, `sol62`, `opus55`, `carbon`, `v41f`).
 
 ## How it works
 
@@ -34,6 +35,8 @@ The only thing that is new is the interface: an ASCII key string in, and one JSO
 ## How each model approached it
 
 **GPT-6.2 Astra — map first, then bespoke solvers.** It spent the early hours extending the overworld route rather than polishing levels, ending with 98 entries, and wrote a dedicated search model per level family. Most of its breakthroughs came from targeted physics experiments (pushing a rock through a wall with the wand, sinking two mirrors to reach a reflection cell) followed by immediate solves. Its final hour went into frame compression rather than new levels.
+
+**Gemini 4 Neon — fast C++ solvers per family, map and levels in lockstep.** It wrote a small Python toolkit (level inspector, ASCII renderer, an overworld model with BFS pathing) and then compiled one C++ BFS solver per level family — Heroes 1/2/3 and two for Mirrors — feeding each the terrain and entities read from `state`, and checking every candidate with a real replay. It cleared `intro` in 16 minutes and then extended the map and solved new levels alternately rather than in phases: 18 levels by minute 54, 48 by minute 97, 79 by minute 148 (not counting `intro`), with 96 map entries at the end. Per-level quality (604 frames/level) trails the top runs, but it is the cheapest run in the top three per level ($0.48/level). It worked through the whole window in a single uninterrupted pi turn.
 
 **Claude Fable 5.2 — build the simulator, then widen the map.** It wrote its own state simulator and overworld model early, then kept patching entity handling (`Elevator_Platform`, `Lily`) as it explored. Its longest stall (21 minutes) was map modelling, not puzzle solving; once a rule was fixed, levels fell in batches (38 → 64 entries in 20 minutes, 32 → 56 levels). Best frame efficiency among the top three (534 frames/level) and the most expensive run per level.
 
@@ -59,6 +62,7 @@ macOS on Apple Silicon (Rosetta 2); the Windows Steam build of the game is requi
 
 - Runs used two builds of the challenge binary: the overworld key mechanism is newer than the build used by the first four runs.
 - Codex and `claude -p` are single-turn harnesses that stop when the model decides it is done; DSH was driven by a goal loop. Time used reflects harness behaviour as much as model behaviour.
+- The Gemini 4 Neon run used pi 1.6.1 against Vertex AI (`google-vertex/gemini-4-neon:high`) with extensions, skills and context files disabled. The wrapper would have resumed the session with `--continue` if pi exited early, but Neon never exited, so the run is a single pi turn.
 - Per-level timestamps come from file creation times, so frame rewrites are not counted as new progress.
 
 ## Previous versions

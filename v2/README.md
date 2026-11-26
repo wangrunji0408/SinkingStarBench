@@ -38,7 +38,7 @@ cp target/x86_64-apple-darwin/challenge/sinking-star-challenge .
 
 用 `./sinking-star-challenge check solutions/std` 对目录计分，输出一行 JSON，包含 `solved_count`、`total_frames` 与按关卡 ID 列出的 `levels`（每项有 `won`、通关帧数 `frames` 或未计分原因 `reason`）。`intro` 进入大地图计一关；其他关卡必须在地图路线中进入且本关解法获胜才计分；`overworld.txt` 本身不计分（`map_only`）。
 
-`solutions/` 按来源分目录：`std/` 是覆盖全部 900 关的参考解；其余是各次挑战实际提交的解法——`sol62/`、`astra62/`、`fable52/`、`opus55/`、`carbon/`、`v41f/`。
+`solutions/` 按来源分目录：`std/` 是覆盖全部 900 关的参考解；其余是各次挑战实际提交的解法——`sol62/`、`astra62/`、`neon/`、`fable52/`、`opus55/`、`carbon/`、`v41f/`。
 
 ## 回放
 
